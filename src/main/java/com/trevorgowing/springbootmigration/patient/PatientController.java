@@ -9,6 +9,7 @@ import com.trevorgowing.springbootmigration.common.exception.ResourceNotFoundExc
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +28,14 @@ class PatientController {
   private final PatientRepository patientRepository;
 
   @ResponseStatus(OK)
+  @PreAuthorize("hasRole(\'USER\')")
   @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
   List<Patient> get() {
     return patientRepository.findAll();
   }
 
   @ResponseStatus(OK)
+  @PreAuthorize("hasRole(\'USER\')")
   @GetMapping(path = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
   Patient get(@PathVariable String id) {
     return Optional.ofNullable(patientRepository.findOne(id))
@@ -43,6 +46,7 @@ class PatientController {
   }
 
   @ResponseStatus(CREATED)
+  @PreAuthorize("hasRole(\'USER\')")
   @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
   Patient post(@RequestBody Patient patient) {
     return patientRepository.save(patient);
@@ -50,6 +54,7 @@ class PatientController {
 
   @ResponseStatus(NO_CONTENT)
   @DeleteMapping(path = "/{id}")
+  @PreAuthorize("hasRole(\'USER\')")
   void delete(@PathVariable String id) {
     patientRepository.delete(id);
   }
