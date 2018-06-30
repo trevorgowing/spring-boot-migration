@@ -1,0 +1,42 @@
+plugins {
+  id "idea"
+  id "java"
+  id "application"
+  id "net.ltgt.apt" version "0.15"
+  id "com.diffplug.gradle.spotless" version "3.13.0"
+}
+
+version = "0.0.1"
+group = "com.trevorgowing"
+sourceCompatibility = 1.8
+archivesBaseName = "spring-boot-migration"
+mainClassName = "com.trevorgowing.springbootmigration.Application"
+
+spotless {
+  java {
+    googleJavaFormat()
+  }
+}
+
+task resolveDependencies {
+  description = "Download and cache dependencies"
+  doLast {
+    configurations.compileOnly.resolve()
+    configurations.runtime.resolve()
+  }
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compileOnly "org.projectlombok:lombok:1.18.0"
+  annotationProcessor "org.projectlombok:lombok:1.18.0"
+
+  testCompileOnly "org.projectlombok:lombok:1.18.0"
+  testAnnotationProcessor "org.projectlombok:lombok:1.18.0"
+
+  testCompile "io.rest-assured:rest-assured:3.1.0"
+  testCompile "io.rest-assured:spring-mock-mvc:3.1.0"
+}

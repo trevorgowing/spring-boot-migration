@@ -1,0 +1,30 @@
+---
+version: "3"
+
+services:
+  mongodb:
+    image: mongo:3.6
+    ports:
+      - "27017:27017"
+    networks:
+      - spring-boot-migration
+    volumes:
+      - spring-boot-migration-data:/data/db
+
+  spring-boot-migration:
+    build: .
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    networks:
+      - spring-boot-migration
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: "mongodb://mongodb:27017/patients"
+
+networks:
+  spring-boot-migration:
+
+volumes:
+  spring-boot-migration-data:

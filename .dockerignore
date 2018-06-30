@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+/build
+/out
+/bin
+
+.gitignore
+*.iml
+*.bat
+*.md
