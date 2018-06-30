@@ -7,7 +7,7 @@ plugins {
   id "org.springframework.boot" version "1.5.14.RELEASE"
 }
 
-version = "0.0.1"
+version = "1.5.x"
 group = "com.trevorgowing"
 sourceCompatibility = 1.8
 archivesBaseName = "spring-boot-migration"
