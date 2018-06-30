@@ -8,7 +8,7 @@ plugins {
   id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
-version = "1.5.x"
+version = "2.0.x"
 group = "com.trevorgowing"
 sourceCompatibility = 1.8
 archivesBaseName = "spring-boot-migration"
