@@ -19,4 +19,4 @@ COPY src/main src/main
 
 RUN ./gradlew bootRepackage
 
-CMD ["java", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n", "-jar", "/opt/spring-boot-migration/build/libs/spring-boot-migration-0.0.1.jar"]
+CMD ["java", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n", "-jar", "/opt/spring-boot-migration/build/libs/spring-boot-migration-1.5.x.jar"]
