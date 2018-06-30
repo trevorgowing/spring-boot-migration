@@ -17,6 +17,6 @@ RUN ./gradlew resolveDependencies
 
 COPY src/main src/main
 
-RUN ./gradlew bootRepackage
+RUN ./gradlew bootJar
 
 CMD ["java", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n", "-jar", "/opt/spring-boot-migration/build/libs/spring-boot-migration-1.5.x.jar"]
