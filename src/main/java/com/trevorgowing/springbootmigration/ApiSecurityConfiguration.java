@@ -7,7 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
@@ -19,8 +19,8 @@ class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final String password;
 
   ApiSecurityConfiguration(
-      @Value("${security.user.name}") String username,
-      @Value("${security.user.password}") String password) {
+      @Value("${spring.security.user.name}") String username,
+      @Value("${spring.security.user.password}") String password) {
     this.username = username;
     this.password = password;
   }
@@ -48,7 +48,7 @@ class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.inMemoryAuthentication()
-        .passwordEncoder(new BCryptPasswordEncoder())
+        .passwordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder())
         .withUser(username)
         .password(password)
         .roles("USER");

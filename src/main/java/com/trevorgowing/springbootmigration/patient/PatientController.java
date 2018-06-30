@@ -7,7 +7,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 import com.trevorgowing.springbootmigration.common.exception.ResourceNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +37,8 @@ class PatientController {
   @PreAuthorize("hasRole(\'USER\')")
   @GetMapping(path = "/{id}", produces = APPLICATION_JSON_UTF8_VALUE)
   Patient get(@PathVariable String id) {
-    return Optional.ofNullable(patientRepository.findOne(id))
+    return patientRepository
+        .findById(id)
         .orElseThrow(
             () ->
                 ResourceNotFoundException.causedBy(
@@ -56,6 +56,6 @@ class PatientController {
   @DeleteMapping(path = "/{id}")
   @PreAuthorize("hasRole(\'USER\')")
   void delete(@PathVariable String id) {
-    patientRepository.delete(id);
+    patientRepository.deleteById(id);
   }
 }
