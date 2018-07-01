@@ -3,6 +3,8 @@ package com.trevorgowing.springbootmigration.common.domain.persistence;
 import com.trevorgowing.springbootmigration.common.domain.constant.IdentifierUse;
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +12,11 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @NoArgsConstructor
-public abstract class Identifier implements Serializable {
+@AllArgsConstructor
+public class Identifier implements Serializable {
 
   private static final long serialVersionUID = 5919231994260255805L;
 
