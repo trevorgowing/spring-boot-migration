@@ -4,28 +4,22 @@ import static com.trevorgowing.springbootmigration.common.domain.constant.Gender
 import static com.trevorgowing.springbootmigration.common.domain.constant.Gender.MALE;
 import static com.trevorgowing.springbootmigration.common.domain.constant.IdentifierUse.OFFICIAL;
 import static com.trevorgowing.springbootmigration.common.domain.constant.NameUse.USUAL;
-import static io.restassured.http.ContentType.JSON;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
 import com.trevorgowing.springbootmigration.common.domain.persistence.HumanName;
 import com.trevorgowing.springbootmigration.common.domain.persistence.Identifier;
 import com.trevorgowing.springbootmigration.common.exception.ExceptionResponse;
 import com.trevorgowing.springbootmigration.test.encoders.AuthenticationEncoder;
 import com.trevorgowing.springbootmigration.test.types.AbstractSpringWebContextTests;
-import io.restassured.module.mockmvc.response.MockMvcResponse;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 @Import({PatientFinder.class, PatientPersister.class})
 public class PatientApiTests extends AbstractSpringWebContextTests {
@@ -35,38 +29,39 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
 
   @Test
   public void testGetPatientsWithNoCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
-        .get("/api/patients")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+    restClient
+        .get()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
   public void testGetPatientsWithInvalidCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("invalid", "invalid"))
-        .get("/api/patients")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
   public void testGetPatientsWithNoExistingPatients_shouldResponseWithStatusOkAndAnEmptyArray() {
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .get("/api/patients")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(OK.value())
-        .body(is(jsonEncoder.encodeToJsonString(Collections.emptyList())));
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(jsonEncoder.encodeToJsonString(Collections.emptyList()));
   }
 
   @Test
@@ -95,38 +90,39 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
             .build();
     persister.persist(patientTwo);
 
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .get("/api/patients")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(OK.value())
-        .body(is(jsonEncoder.encodeToJsonString(Arrays.asList(patientOne, patientTwo))));
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(jsonEncoder.encodeToJsonString(Arrays.asList(patientOne, patientTwo)));
   }
 
   @Test
   public void testGetPatientWithNoCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+    restClient
+        .get()
+        .uri("/api/patients/1")
+        .accept(APPLICATION_JSON_UTF8)
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
   public void testGetPatientWithInvalidCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients/1")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("invalid", "invalid"))
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
@@ -139,15 +135,16 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
             .message("Patient not found for id: \'1\'")
             .build();
 
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients/1")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(NOT_FOUND.value())
-        .body(is(jsonEncoder.encodeToJsonString(exceptionResponse)));
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+        .expectBody()
+        .json(jsonEncoder.encodeToJsonString(exceptionResponse));
   }
 
   @Test
@@ -164,38 +161,41 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
             .build();
     persister.persist(patient);
 
-    given()
-        .accept(JSON)
+    restClient
+        .get()
+        .uri("/api/patients/" + patient.getId())
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .get("/api/patients/" + patient.getId())
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(OK.value())
-        .body(is(jsonEncoder.encodeToJsonString(patient)));
+        .accept(APPLICATION_JSON_UTF8)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(jsonEncoder.encodeToJsonString(patient));
   }
 
   @Test
   public void testPostPatientWithNoCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+    restClient
+        .post()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
+        .contentType(APPLICATION_JSON_UTF8)
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
   public void testPostPatientWithInvalidCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
+    restClient
+        .post()
+        .uri("/api/patients")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("invalid", "invalid"))
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+        .syncBody(Patient.builder().build())
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
@@ -211,58 +211,54 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
                     Identifier.builder().system("system").value("one").use(OFFICIAL).build()))
             .build();
 
-    MockMvcResponse response =
-        given()
-            .accept(JSON)
-            .contentType(JSON)
+    ResponseSpec response =
+        restClient
+            .post()
+            .uri("/api/patients")
+            .accept(APPLICATION_JSON_UTF8)
+            .contentType(APPLICATION_JSON_UTF8)
             .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-            .body(jsonEncoder.encodeToJsonString(patient))
-            .post("/api/patients");
+            .syncBody(patient)
+            .exchange();
 
     Patient persistedPatient = finder.findByGivenAndFamilyName("given", "family");
 
     response
-        .then()
-        .log()
-        .all()
-        .statusCode(CREATED.value())
-        .body(is(jsonEncoder.encodeToJsonString(persistedPatient)));
+        .expectStatus()
+        .isCreated()
+        .expectBody()
+        .json(jsonEncoder.encodeToJsonString(persistedPatient));
   }
 
   @Test
   public void testDeletePatientWithNoCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+    restClient.delete().uri("/api/patients/1").exchange().expectStatus().isUnauthorized();
   }
 
   @Test
   public void testDeletePatientWithInvalidCredentials_shouldRespondWithStatusUnauthorized() {
-    given()
-        .accept(JSON)
+    restClient
+        .delete()
+        .uri("/api/patients/1")
+        .accept(APPLICATION_JSON_UTF8)
         .header(AUTHORIZATION, AuthenticationEncoder.basic("invalid", "invalid"))
-        .get("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(UNAUTHORIZED.value());
+        .exchange()
+        .expectStatus()
+        .isUnauthorized();
   }
 
   @Test
   public void
       testDeletePatientWithNoMatchingPatient_shouldResponseWithStatusNotFoundAndExceptionResponse() {
-    given()
-        .accept(JSON)
+    restClient
+        .delete()
+        .uri("/api/patients/1")
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .delete("/api/patients/1")
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(NO_CONTENT.value());
+        .exchange()
+        .expectStatus()
+        .isNoContent()
+        .expectBody()
+        .isEmpty();
   }
 
   @Test
@@ -279,13 +275,14 @@ public class PatientApiTests extends AbstractSpringWebContextTests {
             .build();
     persister.persist(patient);
 
-    given()
-        .accept(JSON)
+    restClient
+        .delete()
+        .uri("/api/patients/" + patient.getId())
         .header(AUTHORIZATION, AuthenticationEncoder.basic("test", "test"))
-        .delete("/api/patients/" + patient.getId())
-        .then()
-        .log()
-        .ifValidationFails()
-        .statusCode(NO_CONTENT.value());
+        .exchange()
+        .expectStatus()
+        .isNoContent()
+        .expectBody()
+        .isEmpty();
   }
 }

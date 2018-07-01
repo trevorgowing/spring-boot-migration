@@ -1,5 +1,5 @@
 package com.trevorgowing.springbootmigration.patient;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-interface PatientRepository extends MongoRepository<Patient, String> {}
+interface PatientRepository extends ReactiveMongoRepository<Patient, String> {}
