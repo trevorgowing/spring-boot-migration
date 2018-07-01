@@ -36,20 +36,17 @@ dependencies {
   compileOnly "org.projectlombok:lombok:1.18.0"
   annotationProcessor "org.projectlombok:lombok:1.18.0"
 
-  compile "org.springframework.boot:spring-boot-starter-web"
+  compile "org.springframework.boot:spring-boot-starter-webflux"
   compile "org.springframework.boot:spring-boot-starter-json"
   compile "org.springframework.boot:spring-boot-starter-security"
   compile "org.springframework.boot:spring-boot-starter-actuator"
-  compile "org.springframework.boot:spring-boot-starter-data-mongodb"
+  compile "org.springframework.boot:spring-boot-starter-data-mongodb-reactive"
 
   testCompileOnly "org.projectlombok:lombok:1.18.0"
   testAnnotationProcessor "org.projectlombok:lombok:1.18.0"
 
   testCompile "org.springframework.boot:spring-boot-starter-test"
   testCompile "org.springframework.security:spring-security-test:5.0.6.RELEASE"
-
-  testCompile "io.rest-assured:rest-assured:3.1.0"
-  testCompile "io.rest-assured:spring-mock-mvc:3.1.0"
 
   testRuntime "de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.1.1"
 }
