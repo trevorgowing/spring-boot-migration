@@ -19,4 +19,4 @@ COPY src/main src/main
 
 RUN ./gradlew bootJar
 
-CMD ["java", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n", "-jar", "/opt/spring-boot-migration/build/libs/spring-boot-migration-2.0.x.jar"]
+CMD ["java", "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n", "-jar", "/opt/spring-boot-migration/build/libs/spring-boot-migration-2.0.x-webflux.jar"]
