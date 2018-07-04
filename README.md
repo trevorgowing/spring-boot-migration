@@ -3,6 +3,8 @@
 # Migrating from Spring Boot 1.5 to 2.0
 Accompanying demonstration project for [Migrating to Spring Boot 2 and Webflux](https://docs.google.com/presentation/d/1k3G6tUdR_qLqg8VixDts7HG5P0BAGBl-mkVpQYYHvu0/edit?usp=sharing) [meetup](https://www.meetup.com/Cape-Town-Java-Meetup/events/251671231/) talk.
 
+Compare tags `1.5.x`, `2.0.x` and `2.0.x-webflux` to see the changes.
+
 ## Technology
 
 ### Production Code
